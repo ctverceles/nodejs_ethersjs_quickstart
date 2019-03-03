@@ -1,0 +1,50 @@
+
+# Project root
+
+node_modules
+data
+
+# contracts
+contracts/node_modules
+contracts/.env
+contracts/build
+contracts/npm-debug.log
+contracts/yarn-error.log
+contracts/.DS_Store
+
+# Android/IntelliJ
+#
+client/build/
+client/.idea
+client/.gradle
+client/local.properties
+client/*.iml
+
+# node.js
+#
+client/node_modules/
+client/npm-debug.log
+client/yarn-error.log
+
+# BUCK
+client/buck-out/
+client/\.buckd/
+client/*.keystore
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/
+
+client/*/fastlane/report.xml
+client/*/fastlane/Preview.html
+client/*/fastlane/screenshots
+
+# Bundle artifact
+client/*.jsbundle
+
+chainResources/
+
+cheatsheet

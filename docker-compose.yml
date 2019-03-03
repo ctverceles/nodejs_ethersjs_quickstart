@@ -1,0 +1,25 @@
+version: "2.1"
+services:
+
+  # Standard geth chain configured for development mode
+  chain:
+    extends: chain-ephemeral
+    environment:
+      # these accounts are configured to match those generated from the wallet seed used in the API
+      # @see contracts/truffle.js
+      EXTERNAL_ALLOCS: "0x627306090abab3a6e1400e9345bc60c78a8bef57"
+    volumes:
+      - ./data/chain:/cbdata
+
+  # Blockchain with no persistent storage (for test mode)
+  chain-ephemeral:
+    image: foamspace/cliquebait
+    command: ["/cliquebait/run.bash", "--gasprice", "0"]
+    environment:
+      # these accounts are configured to match those used in some truffle tests as pulled from OpenZeppelin repo
+      EXTERNAL_ALLOCS: 0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501200,0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501201,0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501202,0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501203,0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501204,0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501205,0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501206,0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501207,0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501208,0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501209
+      ACCOUNTS_TO_CREATE: 5
+    ports:
+      - 8545:8545
+    networks:
+      - default

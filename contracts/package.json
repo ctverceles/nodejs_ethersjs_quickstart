@@ -1,0 +1,53 @@
+{
+  "name": "contracts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "truffle compile && npm run sync:contracts",
+    "test": "truffle test",
+    "migrate:local": "truffle compile && truffle migrate --reset && yarn run sync:contracts",
+    "migrate:qa": "truffle compile && truffle migrate --network qa --reset && yarn run sync:contracts",
+    "sync:contracts": "cp build/contracts/*.json ../chainResources/"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.1",
+    "chai": "^4.2.0",
+    "erc-1155": "enjin/erc-1155",
+    "es6-promisify": "^6.0.0",
+    "loom-truffle-provider": "^0.7.0",
+    "openzeppelin-solidity": "2.0.0-rc.3",
+    "p-timeout": "^2.0.1",
+    "truffle-core": "^4.1.14",
+    "truffle-hdwallet-provider": "^0.0.6",
+    "truffle-test-utils": "^0.1.0",
+    "web3-utils": "^1.0.0-beta.36"
+  },
+  "devDependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
