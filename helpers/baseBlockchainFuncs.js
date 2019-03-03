@@ -2,19 +2,18 @@
  * Low level ethereum blockchain interactions
  * Use call and sendTx methods to call any smart contract func
  *
- * @package: SOOW Consumer Rewards
- * @author:  Chris Verceles <chris.verch@consensys.net>
- * @since:   2018-10-09
+ * @package: Life
+ * @author:  Chris Verceles <chris@lifeme.sh>
+ * @since:   2018-01-03
  * @flow
  */
 
-const { Contract, Wallet, providers } = require('ethers');
+const {readFileSync} = require('fs');
+const {Contract, Wallet, providers} = require('ethers');
 const moveDecimal = require('move-decimal-point');
 const HDWalletProvider = require('truffle-hdwallet-provider');
 const Web3 = require('web3');
-const url = require('url');
-
-let LOG_CHAIN_CALLS;
+const url = require('url')
 
 let staticConnVars = (function () {
   let wallet;
@@ -39,8 +38,6 @@ module.exports = {
     }
 
     connVars.wallet = Wallet.fromMnemonic(secrets.SEED_PHRASE);
-
-    LOG_CHAIN_CALLS = secrets.LOG_CHAIN_CALLS;
 
     /**
      * If we have the auth information then use that to connect, rather than just the URL
@@ -94,49 +91,11 @@ module.exports = {
   },
 
   /**
-   * @returns the address of the SOOW token smart contract
-   */
-  getContractAddress: () => {
-    checkIfChainIsConnectedThrowOtherwise();
-    return connVars.address;
-  },
-
-  /**
-   *
-   * @returns the provider if just that alone is needed
-   */
-  getProvider: () => {
-    checkIfChainIsConnectedThrowOtherwise();
-    return connVars.provider;
-  },
-
-  /**
    * Checks whether or not a blockchain connection has been initialised
    * @returns boolean
    */
   isConnected: () => {
     return connVars.wallet !== 'undefined' && connVars.wallet.provider !== 'undefined' && connVars.contract !== 'undefined' && connVars.hdWalletProvider !== 'undefined';
-  },
-
-  /**
-   * Put presigned transaction onto the chain
-   */
-  sendSignedTransaction: async (signedTx) => {
-    try {
-      const txHash = await connVars.wallet.provider.sendTransaction(signedTx);
-      const tx = await connVars.wallet.provider.waitForTransaction(txHash);
-      const txReceipt = await connVars.wallet.provider.getTransactionReceipt(tx.hash);
-
-      // check status of tx, 0 = failed, 1 = success
-      if (txReceipt.status === 0) {
-        const error = new Error(`Failed transaction ${tx.hash} with status code: [${txReceipt.status}]. (${txReceipt.gasUsed} gas used)`);
-        throw error;
-      }
-      return txReceipt;
-    } catch (e) {
-      console.error('Error in sendSignedTransaction', e);
-      throw e;
-    }
   },
 
   /**
@@ -146,17 +105,15 @@ module.exports = {
    * @returns {Promise} a Promise for the value to be returned from the read only smart contract function
    */
   call: async (funcName, ...callParams) => {
-    console.log('call', funcName, ', SOOW contract address:', connVars.address);
-    logBlockchainCallIf_LOG_CHAIN_CALL(funcName);
     checkIfContractExistsThrowOtherwise();
-    checkIfStringExistsIsNotEmptyThrowOtherwise(funcName, 'baseChainFunctions.js: call method');
+    checkIfStringExistsIsNotEmptyThrowOtherwise(funcName, "baseChainFunctions.js: call method");
 
     try {
       let result = await connVars.contract[funcName](...callParams);
 
       return result;
     } catch (err) {
-      throw new Error('Failed to execute call (read only transaction): ' + err); // need better logging
+      throw new Error("Failed to execute call (read only transaction): " + err); // need better logging
     }
   },
 
@@ -167,27 +124,24 @@ module.exports = {
    * @returns {Promise} a Promise for the transaction receipt object containing details of the successful tx and throws an error if the transaction failed to confirm
    */
   sendTx: async (funcName, ...callParams) => {
-    console.log('sendTx', funcName, ', SOOW contract address:', connVars.address);
-    logBlockchainCallIf_LOG_CHAIN_CALL(funcName);
     checkIfContractExistsThrowOtherwise();
-    checkIfStringExistsIsNotEmptyThrowOtherwise(funcName, 'baseChainFunctions.js: sendTx method');
+    checkIfStringExistsIsNotEmptyThrowOtherwise(funcName, "baseChainFunctions.js: sendTx method");
 
     try {
       const tx = await connVars.contract.functions[funcName](...callParams);
       await tx.wait(); // wait for tx to be confirmed. can optionally enter integer parameter denoting # of blocks to wait, ex: await tx.wait(3)
-
       // now get txReceipt using Provider that should be in Wallet
       const txReceipt = await connVars.wallet.provider.getTransactionReceipt(tx.hash);
 
       // check status of tx, 0 = failed, 1 = success
       if (txReceipt.status === 0) {
-        const error = new Error(`Failed transaction ${tx.hash} with status code: [${txReceipt.status}]. (${txReceipt.gasUsed} gas used)`);
+        const error = new Error(`Failed transaction ${tx.Hash} with status code ${txReceipt.status}. ${txReceipt.gasUsed} gas used`);
         throw error;
       }
 
       return txReceipt;
     } catch (err) {
-      throw new Error('Failed to execute sendTx (state changing transaction): ' + err); // need better logging
+      throw new Error("Failed to execute sendTx (state changing transaction): " + err); // need better logging
     }
   },
   /**
@@ -214,7 +168,7 @@ module.exports = {
     if (connVars.hdWalletProvider) {
       const addresses = connVars.hdWalletProvider.getAddresses();
       return addresses[accountNum];
-    } else throw new Error('baseChainFunctions: hdWalletProvider has not been initialised');
+    } else throw new Error("baseChainFunctions: hdWalletProvider has not been initialised");
   }
 };
 
@@ -230,34 +184,23 @@ function checkIfStringExistsIsNotEmptyThrowOtherwise (stringName, errorLocation)
 }
 
 /**
- * Empty or null string checker
- * @param {string} funcName The smart contract function being called
- */
-function logBlockchainCallIf_LOG_CHAIN_CALL (funcName) {
-  if (LOG_CHAIN_CALLS === 'true') {
-    console.log('BC_LOGGER_DEBUG', new Date().toUTCString(), 'Backend chain access', `Sending tx for smart contract function: ${funcName}`);
-  }
-}
-
-/**
  * Loads the JSON file interface that refers to the deployed smart contract (SOOW.sol)
  * @param {string} contractBuildFolder The folder containing *.json
  * @param {string} contractName The name of the smart contract without any extension or file types
  * @returns the parsed json object
  */
 function loadContractJSONFile (contractBuildFolder, contractName) {
-  const filename = contractBuildFolder + contractName + '.json';
-
   try {
+    const filename = contractBuildFolder + contractName + '.json';
+
     const jsonStr = readFileSync(filename, 'utf8');
     const json = JSON.parse(jsonStr);
 
     return json;
   } catch (err) {
-    throw new Error(`Failed to load contract json file ${filename}. Make sure the target chain is running and try running yarn dev:redeploy again`);
+    throw new Error(`Failed to load contract json from file with folder ${contractBuildFolder} and contract name ${contractName}`);
   }
 }
-
 
 /**
  * Creates the default options for sending transactions to the blockchain
@@ -269,16 +212,6 @@ function createSendOptions (gasPriceParam = 0) {
     gasPrice: gasPriceParam,
     gasLimit: 1200000
   };
-}
-
-/**
- * Check if the chain is connected
- * Throw an error if not
- */
-function checkIfChainIsConnectedThrowOtherwise () {
-  if (!module.exports.isConnected()) {
-    throw new Error(`chain is not connected`);
-  }
 }
 
 /**
