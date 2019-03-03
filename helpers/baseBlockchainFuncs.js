@@ -246,15 +246,15 @@ function logBlockchainCallIf_LOG_CHAIN_CALL (funcName) {
  * @returns the parsed json object
  */
 function loadContractJSONFile (contractBuildFolder, contractName) {
-  try {
-    const filename = contractBuildFolder + contractName + '.json';
+  const filename = contractBuildFolder + contractName + '.json';
 
+  try {
     const jsonStr = readFileSync(filename, 'utf8');
     const json = JSON.parse(jsonStr);
 
     return json;
   } catch (err) {
-    throw new Error(`Failed to load contract json from file with folder ${contractBuildFolder} and contract name ${contractName}`);
+    throw new Error(`Failed to load contract json file ${filename}. Make sure the target chain is running and try running yarn dev:redeploy again`);
   }
 }
 

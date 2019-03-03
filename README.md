@@ -23,9 +23,9 @@
 3. Install dependencies by
 	1. running `yarn` at root
 	2. `cd contracts` then `yarn`
-4. at root, `yarn dev:redeploy:contracts`
-5. `yarn dev:chain`
-6. in new window, `yarn test:chainconn` at root to check if everything's working (currently only tests ethersjs blockchain connection)
+4. at root, `yarn dev:chain`
+5. at root, `yarn dev:redeploy`
+6. in new window, `yarn test:chain` at root to check if everything's working (currently only tests ethersjs blockchain connection)
 
 #### Note
 The above instructions are for running on a local chain (dev environment). instructions for deploying to kaleido chain:
