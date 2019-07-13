@@ -4,6 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
+        "install:all": "npm-run-all install:contracts install:root",
+        "install:root": "yarn",
         "install:contracts": "cd contracts && yarn install",
         "dev:chain": "docker-compose up chain",
         "dev:chain:nolog": "docker-compose up chain >/dev/null 2>&1",

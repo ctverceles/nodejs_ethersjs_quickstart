@@ -1,3 +1,5 @@
+.env
+
 
 # Project root
 
@@ -45,6 +47,6 @@ client/*/fastlane/screenshots
 # Bundle artifact
 client/*.jsbundle
 
-chainResources/
+chainResources/*
 
 cheatsheet
