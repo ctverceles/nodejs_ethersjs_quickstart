@@ -33,7 +33,7 @@ module.exports = {
    * @returns {Promise} the contract object that abstracts the smart contract
    */
   init: async (secrets, contractName) => {
-    if (!secrets || !secrets.SEED_PHRASE || !secrets.CHAIN_CONNECTION_URL) {
+    if (!secrets || !secrets.SEED_PHRASE || !secrets.CHAIN_URL) {
       return Promise.reject(new Error("baseChainFunctions.js: Missing or invalid secrets or secrets field(s)"));
     }
 
@@ -45,7 +45,7 @@ module.exports = {
      *
     */
     let connectionData;
-    const connectionUrl = url.parse(secrets.CHAIN_CONNECTION_URL);
+    const connectionUrl = url.parse(secrets.CHAIN_URL);
     if (connectionUrl.auth) {
         connectionData = {
             url: connectionUrl.protocol+'//'+connectionUrl.host,
@@ -54,29 +54,29 @@ module.exports = {
             allowInsecure: false
         };
     } else {
-        connectionData = secrets.CHAIN_CONNECTION_URL;
+        connectionData = secrets.CHAIN_URL;
     }
     /**
      * when using JsonRpcProvider and when connecting to a local geth node,
      * pass 'unspecified' as a chain id parameter (2nd parameter) to avoid
      * 'invalid sender' error when calling ethers.Wallet.sendTransaction method.
-     * If secrets.CHAIN_NET_ID === 'unspecified' then means we're in dev
+     * If secrets.CHAIN_ID === 'unspecified' then means we're in dev
      * otherwise (for Kaleido) we must pass an object with the `chainId` property
     */
     let provider;
-    if (secrets.CHAIN_NET_ID === 'unspecified') {
+    if (secrets.CHAIN_ID === 'unspecified') {
       provider = new providers.JsonRpcProvider(connectionData, 'unspecified');
     } else {
-      provider = new providers.JsonRpcProvider(connectionData, { chainId: secrets.CHAIN_NET_ID });
+      provider = new providers.JsonRpcProvider(connectionData, { chainId: secrets.CHAIN_ID });
     }
 
     connVars.wallet = new Wallet(connVars.wallet.privateKey, provider);
 
     // for getting other wallet addresses (SOOW address is hdWalletProvider.getAddresses()[1])
-    connVars.hdWalletProvider = new HDWalletProvider(secrets.SEED_PHRASE, secrets.CHAIN_CONNECTION_URL, 0, 10);
+    connVars.hdWalletProvider = new HDWalletProvider(secrets.SEED_PHRASE, secrets.CHAIN_URL, 0, 10);
 
     // using web3 getId func to fetch the network we're on - ethers doesn't have an easy to access equivalent
-    let web3 = new Web3(secrets.CHAIN_CONNECTION_URL);
+    let web3 = new Web3(secrets.CHAIN_URL);
     let network = await web3.eth.net.getId();
 
     let buildDir = process.cwd() + "/chainResources/";

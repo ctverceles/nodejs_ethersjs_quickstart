@@ -11,9 +11,9 @@
 - from project root, add the ff in a new .env file:
 
 		
-		CHAIN_CONNECTION_URL="http://localhost:8545/" 
+		CHAIN_URL="http://localhost:8545/" 
 		SEED_PHRASE="candy maple cake sugar pudding cream honey rich smooth crumble sweet treat"
-		CHAIN_NET_ID="unspecified"
+		CHAIN_ID="unspecified"
 
 ### Init repository
 1. Install docker if you haven't https://docs.docker.com/docker-for-mac/install/
