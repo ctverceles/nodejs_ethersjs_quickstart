@@ -11,6 +11,7 @@
         "dev:chain:nolog": "docker-compose up chain >/dev/null 2>&1",
         "dev:redeploy": "cd contracts && rm -Rf build && yarn migrate:local",
         "qa:redeploy": "cd contracts && rm -Rf build && yarn migrate:qa",
+        "test": "yarn test:chain",
         "test:chain": "npx jest __tests__/chain.test.js",
         "migrate:local": "cd contracts && yarn migrate:local",
         "clean:modules": "rm -Rf node_modules && rm -Rf contracts/node_modules",
