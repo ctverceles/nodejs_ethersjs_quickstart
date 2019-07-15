@@ -7,6 +7,16 @@
     "test": "truffle test",
     "migrate:local": "truffle compile && truffle migrate --reset && yarn run sync:contracts",
     "migrate:qa": "truffle compile && truffle migrate --network qa --reset && yarn run sync:contracts",
+    
+    "test:loomchain": "truffle test --network loom_dapp_chain",
+    "test:extdev": "truffle test --network extdev_plasma_us1",
+    "deploy:extdev": "truffle deploy --network extdev_plasma_us1",
+    "gen:rinkeby-key": "node ./scripts/gen-eth-key.js rinkeby",
+    "get:loom": "if [ ! -d loom ]; then mkdir loom && cd loom && curl https://raw.githubusercontent.com/loomnetwork/loom-sdk-documentation/master/scripts/get_loom.sh | sh && chmod +x ./loom && cd ..; fi",
+    "gen:extdev-key": "npm run get:loom && ./loom/loom genkey -k extdev_private_key -a extdev_public_key",
+    "gen:loom-key": "npm run get:loom && ./loom/loom genkey -k loom_private_key -a loom_public_key",
+    "loom:init": "cd loom && chmod +x loom && ./loom init -f && cd ..",
+    "loom:run": "cd loom && ./loom run && cd ..",
     "sync:contracts": "cp build/contracts/*.json ../chainResources/"
   },
   "dependencies": {
@@ -14,13 +24,21 @@
     "chai": "^4.2.0",
     "erc-1155": "enjin/erc-1155",
     "es6-promisify": "^6.0.0",
-    "loom-truffle-provider": "^0.7.0",
     "openzeppelin-solidity": "2.0.0-rc.3",
     "p-timeout": "^2.0.1",
     "truffle-core": "^4.1.14",
-    "truffle-hdwallet-provider": "^0.0.6",
     "truffle-test-utils": "^0.1.0",
-    "web3-utils": "^1.0.0-beta.36"
+    "web3-utils": "^1.0.0-beta.36",
+    "truffle-hdwallet-provider": "^1.0.2",
+    "truffle-privatekey-provider": "^1.3.0",
+    "bip39": "^3.0.2",
+    "bn.js": "4.11.8",
+    "commander": "^2.18.0",
+    "ethereumjs-tx": "^1.3.7",
+    "ethereumjs-wallet": "^0.6.2",
+    "js-sha256": "^0.9.0",
+    "loom-js": "1.38.0",
+    "loom-truffle-provider": "^0.11.0"
   },
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
