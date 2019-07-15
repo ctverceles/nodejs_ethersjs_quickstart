@@ -10,8 +10,11 @@
     
     "test:loomchain": "truffle test --network loom_dapp_chain",
     "test:extdev": "truffle test --network extdev_plasma_us1",
+    "deploy:loomchain:reset": "truffle deploy --reset --network loom_dapp_chain",
+    "deploy:loomchain": "truffle deploy --network loom_dapp_chain",
     "deploy:extdev": "truffle deploy --network extdev_plasma_us1",
-    "gen:rinkeby-key": "node ./scripts/gen-eth-key.js rinkeby",
+    "deploy:extdev:reset": "truffle deploy --reset --network extdev_plasma_us1",
+    
     "get:loom": "if [ ! -d loom ]; then mkdir loom && cd loom && curl https://raw.githubusercontent.com/loomnetwork/loom-sdk-documentation/master/scripts/get_loom.sh | sh && chmod +x ./loom && cd ..; fi",
     "gen:extdev-key": "npm run get:loom && ./loom/loom genkey -k extdev_private_key -a extdev_public_key",
     "gen:loom-key": "npm run get:loom && ./loom/loom genkey -k loom_private_key -a loom_public_key",

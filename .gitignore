@@ -1,5 +1,6 @@
 .env
-
+contracts/extdev_private_key
+contracts/extdev_public_key
 
 # Project root
 
